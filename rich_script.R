@@ -1,1 +1,128 @@
 # Rich's Script
+
+library(tidyverse)
+library(janitor)
+library(directlabels)
+library(DT)
+library(kableExtra)
+
+mack_creek <- read_csv("mack_creek_vertebrates.csv") %>% 
+  clean_names() %>% 
+  filter(species == "DITE")
+
+# --------------------
+# Results A: Create data frame for salamander count graph
+# --------------------
+
+mack_creek_count <- mack_creek %>% 
+  select(year, section) %>% 
+  filter(section %in% c("OG", "CC")) %>% 
+  group_by(year, section) %>% 
+  summarize(count = n())
+
+# ---------------------
+# Create a GGplot of the count data
+# ---------------------
+
+ggplot(data = mack_creek_count, aes(x = year, y = count, group = section))+
+  geom_line(aes(color = section), show.legend = FALSE)+
+  geom_point(color = "gray50")+
+  geom_dl(aes(label = section, color = section), method = list(dl.combine("last.points"), cex = 0.85))+
+  scale_x_continuous(expand = c(0, 0),
+                   limits = c(1993, 2019.5),
+                   breaks = seq(1993, 2018, by = 5))+
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 800),
+                     breaks = seq(0, 800, by = 200))+
+  labs(x = "Year",
+       y = "Count",
+       title = "Salamander Counts by Section: 1993 - 2017")
+
+# -----------------------------------------------------------------------------
+# Results B: Create data frame for table (channel classification & forest type)
+# -----------------------------------------------------------------------------
+
+mack_c_table <- mack_creek %>% 
+  mutate(section_name = if_else(section == "CC", "Clear Cut", "Old Growth")) %>% 
+  select(year, section_name, unittype) %>%
+  filter(year == 2017,
+         unittype %in% c("C", "P", "SC"),
+         section_name %in% c("Clear Cut", "Old Growth")) %>% 
+  group_by(section_name, unittype) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = unittype, values_from = count) %>% 
+  rename(Cascades = "C",
+         Pool = "P",
+         "Side Channel" = "SC",
+         Section = "section_name")
+
+mack_c_props <- mack_c_table %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting(digits = 1) %>% 
+  adorn_ns(position = "front")
+
+# --------------------
+# Create contingency table using kable
+# --------------------
+
+kable(mack_c_props) %>% 
+  kable_styling()
+
+# -------------------------------------------------
+# Results C: Use chi square to determine independence
+# -------------------------------------------------
+
+chi_mack <- mack_c_table %>%
+  ungroup() %>% 
+  select(-Section)
+
+chi_mack_test <- chisq.test(chi_mack)
+
+chi_mack_test
+
+# -------------------------------------------------
+# Results D: Compare weights of Pacific giant salamanders in clear cut and old growth forest sections of the creek in 2017
+# -------------------------------------------------
+
+# This data frame may be useful for a means comparison
+
+mack_c_weights <- mack_creek %>% 
+  select("year", "section", "weight") %>% 
+  filter(section %in% c("OG", "CC"),
+         year == 2017) %>% 
+  group_by(year, section) %>% 
+  summarize(mean_weight = round(mean(weight, na.rm = TRUE), 2)) %>% 
+  ungroup() %>% 
+  select(-year)
+
+# This data frame will be used for box_plot & jitter_plot
+
+mack_c_weights_graph <- mack_creek %>% 
+  select("year", "section", "weight") %>% 
+  filter(section %in% c("OG", "CC"),
+         year == 2017)
+
+# Create box_plot & jitter_plot
+
+ggplot(mack_c_weights_graph, aes(x = section, y = weight)) +
+  geom_jitter(aes(color = section), show.legend = FALSE)+
+  geom_boxplot(aes(color = section), alpha = 0.5, show.legend = FALSE)+
+  scale_x_discrete(labels = c("Clear Cut", "Old Growth"))+
+  labs(x = "Section",
+       y = "Weight",
+       title = "2017 Means Comparison: Old Growth vs Clear Cut")
+
+# Conduct a means comparison of weights usins a 2-sample t.test
+
+
+ mack_weights_cc <- mack_c_weights_graph %>% 
+   filter(section == "CC") %>% 
+   pull(weight)
+
+ mack_weights_og <- mack_c_weights_graph %>% 
+   filter(section == "OG") %>% 
+   pull(weight)
+
+ mack_means_comparison <- t.test(mack_weights_og, mack_weights_cc)
+ mack_means_comparison
+ 
