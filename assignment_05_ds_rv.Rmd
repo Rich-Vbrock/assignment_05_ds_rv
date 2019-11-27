@@ -1,0 +1,31 @@
+---
+title: 'Assignment #5'
+author: "Richard Viebrock"
+date: "11/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Attach Packages
+
+library(tidyverse)
+library(janitor)
+library(directlabels)
+library(DT)
+
+```
+
+```{r}
+
+# Read in data
+
+mack_creek <- read_csv("mack_creek_vertebrates.csv") %>% 
+  clean_names()
+
+```
+
