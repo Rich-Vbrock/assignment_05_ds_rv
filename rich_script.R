@@ -149,6 +149,10 @@ ggplot(mack_c_weights_graph, aes(x = section, y = weight)) +
  
  # Make a QQ plot
 
+ ggplot(data = mack_pcs_weights, aes(sample = weight))+
+   geom_qq()+
+   facet_wrap(~unittype)
+ 
  # Make a gg_beeswarm plot to compare means
  
  ggplot()+
@@ -169,11 +173,7 @@ ggplot(mack_c_weights_graph, aes(x = section, y = weight)) +
                  color = "red") +
    scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))
  
- # Maybe a qq plot?
- 
- ggplot(data = mack_pcs_weights, aes(sample = weight))+
-   geom_qq()+
-   facet_wrap(~unittype)
+ # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
  
  # Conduct a Laveene's test to check for equal variance
  
