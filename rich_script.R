@@ -5,6 +5,8 @@ library(janitor)
 library(directlabels)
 library(DT)
 library(kableExtra)
+library(ggbeeswarm)
+library(car)
 
 mack_creek <- read_csv("mack_creek_vertebrates.csv") %>% 
   clean_names() %>% 
@@ -102,7 +104,7 @@ mack_c_weights_graph <- mack_creek %>%
   filter(section %in% c("OG", "CC"),
          year == 2017)
 
-# Create box_plot & jitter_plot
+# Create box_plot & jitter_plot (Remember - box plots compare medians, not means!)
 
 ggplot(mack_c_weights_graph, aes(x = section, y = weight)) +
   geom_jitter(aes(color = section), show.legend = FALSE)+
@@ -126,3 +128,60 @@ ggplot(mack_c_weights_graph, aes(x = section, y = weight)) +
  mack_means_comparison <- t.test(mack_weights_og, mack_weights_cc)
  mack_means_comparison
  
+ # -----------------------------------------------------
+ # Compare weights of Pacific giant salamanders in pools, cascades and side-channels of Mack Creek in 2017
+ # -----------------------------------------------------
+ 
+ mack_pcs_weights <- mack_creek %>% 
+   select("year", "unittype", "weight", "section") %>% 
+   filter(unittype %in% c("C", "P", "SC"),
+          year == 2017,
+          section %in% c("CC", "OG"))
+ 
+ mack_pcs_summary <- mack_pcs_weights %>% 
+   group_by(unittype) %>% 
+   summarize(
+     mean_weight = mean(weight, na.rm = TRUE),
+     sd_weight = sd(weight, na.rm = TRUE),
+     sample_size = n(),
+     se_weight = sd(weight, na.rm = TRUE) / sqrt(n()),
+     var_weight = var(weight, na.rm = TRUE))
+ 
+ # Make a QQ plot
+
+ # Make a gg_beeswarm plot to compare means
+ 
+ ggplot()+
+   geom_beeswarm(data = mack_pcs_weights,
+                 aes(x = unittype, y = weight),
+                 size = 1,
+                 alpha = 0.6,
+                 color = "dodgerblue") +
+   geom_point(data = mack_pcs_summary,
+              aes(x = unittype, y = mean_weight),
+              color = "red",
+              size = 2)+
+   geom_errorbar(data = mack_pcs_summary,
+                 aes(x = unittype,
+                     ymin = mean_weight - sd_weight,
+                     ymax = mean_weight + sd_weight),
+                 width = 0.1,
+                 color = "red") +
+   scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))
+ 
+ # Maybe a qq plot?
+ 
+ ggplot(data = mack_pcs_weights, aes(sample = weight))+
+   geom_qq()+
+   facet_wrap(~unittype)
+ 
+ # Conduct a Laveene's test to check for equal variance
+ 
+ leveneTest(weight ~ unittype, data = mack_pcs_weights)
+ 
+ # If this is correct, retain the NULL hypothesis that variances are equal
+ 
+mack_aov <- aov(weight ~ unittype, data = mack_pcs_weights)
+summary(mack_aov)
+
+TukeyHSD(mack_aov)
