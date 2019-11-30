@@ -36,7 +36,7 @@ library(wesanderson)
 
 ### **Results**
 
-#### Part A: Salamander Counts by Section
+#### **Part A:** Salamander Counts by Section
 
 ```{r}
 
@@ -50,6 +50,7 @@ mack_creek <- read_csv("mack_creek_vertebrates.csv") %>%
 
 ```
 
+<center>
 ```{r, fig.width=6, fig.height=6, fig.cap = "**Figure 1**: *Insert caption here.*"}
 
 # --------------------------------
@@ -84,14 +85,16 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section_name))+
   theme_minimal()
 
 ```
+</center>
 
-##### Interesting Trends
+#### Analysis of Results:
 - Interesting trend 1
 - Interesting trend 2
 - Interesting trend 3
 
+&nbsp;
 
-#### Results B: 2017 Salamander Counts by Channel Classification
+#### **Results B:** 2017 Salamander Counts by Channel Classification
 
 **Figure 2:** *Insert caption here*
 ```{r}
@@ -128,8 +131,14 @@ kable(mack_c_props) %>%
 
 ```
 
+#### Analysis of Results:
+- Interesting trend 1
+- Interesting trend 2
+- Interesting trend 3
 
-#### Results C: Analysis of Salamander Counts by Channel Classification
+&nbsp;
+
+#### **Results C:** Analysis of Salamander Counts by Channel Classification
 ```{r}
 
 # ----------------------------------------------------
@@ -147,9 +156,10 @@ Chi Squared test of independence: `r (chi_mack_test$statistic)`
 
 Regarding the locations where salamanders were observed in Mack Creek in 2017, is there a significant effect of forest condition (old growth or clear cut) on where in the channel salamanders are found (channel classification)? Report your statistical findings in text, in the context of the actual counts / proportions you present in the table. 
 
+&nbsp;
 
-#### Results D: Pacific Giant Salamander Weights by Section
-
+#### **Results D:** Pacific Giant Salamander Weights by Section
+<center>
 ```{r, fig.width=6, fig.height=6, fig.cap = "**Figure 1**: *Insert caption here.*"}
 
 # ---------------------------------------------
@@ -197,7 +207,7 @@ ggplot()+
 
 # Make sure that the beeswarm and the means are lined up appropriately. How do you make sure? Visual Check?
 ```
-
+</center>
 ```{r}
 
 # --------------------------------------------------
@@ -216,9 +226,12 @@ ggplot()+
 
 ```
 
-##### Means Comparison Analysis
-
 There is not a significant difference: (t(`r round(mack_means_comparison$p.value, 2)`) = `r round(mack_means_comparison$p.value, 3)`
+
+&nbsp;
+
+#### **Results E:** Means Comparison of Salamander Weight by Channel Classification
+##### Visual Comparison of Salamander Weight by Channel Classification
 
 ```{r}
 
@@ -244,7 +257,42 @@ There is not a significant difference: (t(`r round(mack_means_comparison$p.value
      var_weight = var(weight, na.rm = TRUE))
 
 ```
+<center>
+```{r}
 
+# -----------------------------------
+# Make beeswarm plot to compare means
+# -----------------------------------
+
+ggplot()+
+   geom_beeswarm(data = mack_pcs_weights,
+                 aes(x = unittype, y = weight, color = unittype),
+                 size = 1,
+                 alpha = 0.6,
+               show.legend = FALSE) +
+   scale_color_manual(values = wes_palette("Darjeeling1"))+
+   geom_point(data = mack_pcs_summary,
+              aes(x = unittype, y = mean_weight),
+              color = "black",
+              size = 2)+
+   geom_errorbar(data = mack_pcs_summary,
+                 aes(x = unittype,
+                     ymin = mean_weight - sd_weight,
+                     ymax = mean_weight + sd_weight),
+                 width = 0.1,
+                 color = "black") +
+   scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))+
+  labs(x = "Unit Type",
+       y = "Weight (grams)",
+       title = "Means Comparison by Channel Clasification")+
+  theme_light()
+
+ # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
+
+```
+</center>
+##### Analysis of Data Spread Normalcy and Variance
+<center>
 ```{r}
 
 # ------------------------------------
@@ -271,7 +319,7 @@ ggplot(data = mack_pcs_weights, aes(x = weight))+
 # Conduct a Lavene's test to ensure equal variance
 # ------------------------------------------------
 
-leveneTest(weight ~ unittype, data = mack_pcs_weights)
+# leveneTest(weight ~ unittype, data = mack_pcs_weights)
 
 # ----------------------------------------------------
 # Conduct a chi-squared test to check for independence?
@@ -282,38 +330,14 @@ leveneTest(weight ~ unittype, data = mack_pcs_weights)
 #  summarize(weight = mean(weights))
 
 ```
+</center>
 
-```{r}
+#### Lavene's Test for Equal Variance
+- Lavene's Test Result:
 
-# -----------------------------------
-# Make beeswarm plot to compare means
-# -----------------------------------
-
-ggplot()+
-   geom_jitter(data = mack_pcs_weights,
-                 aes(x = unittype, y = weight, color = unittype),
-                 size = 1,
-                 alpha = 0.6,
-               show.legend = FALSE) +
-   scale_color_manual(values = wes_palette("Darjeeling1"))+
-   geom_point(data = mack_pcs_summary,
-              aes(x = unittype, y = mean_weight),
-              color = "black",
-              size = 2)+
-   geom_errorbar(data = mack_pcs_summary,
-                 aes(x = unittype,
-                     ymin = mean_weight - sd_weight,
-                     ymax = mean_weight + sd_weight),
-                 width = 0.1,
-                 color = "black") +
-   scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))+
-  labs(x = "Unit Type",
-       y = "Weight (grams)",
-       title = "Means Comparison by Channel Clasification")
-
- # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
-
-```
+#### One-way ANOVA & Post-Hoc Testing:
+- ANOVA Result:
+- Tukey's HSD Result:
 
 ```{r}
 
@@ -322,12 +346,22 @@ ggplot()+
 # ----------------------------------------
 
 mack_aov <- aov(weight ~ unittype, data = mack_pcs_weights)
-summary(mack_aov)
+# summary(mack_aov)
 
 # ----------------------------------------
 # Conduct Tukey's HSD for post-hoc testing
 # ----------------------------------------
 
-TukeyHSD(mack_aov)
+# TukeyHSD(mack_aov)
 
 ```
+
+#### Analysis of Results:
+- Interesting trend 1
+- Interesting Trend 2
+- Interesting Trend 3
+
+### **Summary**
+A brief summary of the major findings (pick 3 - 4) from your mini-report. A bullet-pointed list is fine, but the findings should be well-written, responsible (don’t overstate your findings), and refer to outcomes (e.g. figures, tables) in the Results section
+
+### **References**
