@@ -1,6 +1,6 @@
 ---
 title: 'Assignment #5'
-author: "Richard Viebrock"
+author: "Richard Viebrock and David Segan"
 date: "11/27/2019"
 output: html_document
 ---
@@ -8,6 +8,14 @@ output: html_document
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
+
+### **Introduction**
+
+A short (7 - 8 sentence) introduction that helps the reader understand the purpose/motivation of the research, and previews the content of the report. Add an image of the Pacific giant salamander, making sure to give appropriate credit to the author / creator) in the image figure caption.
+
+### **Data and Methods**
+
+A brief ‘Data and Methods’ section (5 - 6 sentences) summarizing the data and how it was analyzed. Briefly describe the variables being studied in this report. Include the types of statistical tests performed, significance level used, and software (with version) for analysis. Include a map of the area. You can use an already published map of the area, making sure to give appropriate credit to the author / creator) in the map figure caption.
 
 ```{r}
 
@@ -22,8 +30,13 @@ library(DT)
 library(kableExtra)
 library(ggbeeswarm)
 library(car)
+library(wesanderson)
 
 ```
+
+### **Results**
+
+#### Part A: Salamander Counts by Section
 
 ```{r}
 
@@ -37,39 +50,50 @@ mack_creek <- read_csv("mack_creek_vertebrates.csv") %>%
 
 ```
 
-```{r}
+```{r, fig.width=6, fig.height=6, fig.cap = "**Figure 1**: *Insert caption here.*"}
 
 # --------------------------------
 # Results A: Create DF for salamander count graph
 # --------------------------------
 
 mack_creek_count <- mack_creek %>% 
-  select(year, section) %>% 
-  filter(section %in% c("OG", "CC")) %>% 
-  group_by(year, section) %>% 
+  filter(section %in% c("CC", "OG")) %>% 
+  mutate(section_name = if_else(section == "CC", "Clear Cut", "Old Growth")) %>% 
+  select(year, section_name) %>% 
+  group_by(year, section_name) %>% 
   summarize(count = n())
 
 # -------------------------------------------
 # Use ggplot to create salamander count graph
 # -------------------------------------------
 
-ggplot(data = mack_creek_count, aes(x = year, y = count, group = section))+
-  geom_line(aes(color = section), show.legend = FALSE)+
-  geom_point(color = "gray50")+
-  geom_dl(aes(label = section, color = section), method = list(dl.combine("last.points"), cex = 0.85))+
+ggplot(data = mack_creek_count, aes(x = year, y = count, group = section_name))+
+  geom_line(aes(color = section_name), size = 1, show.legend = FALSE)+
+  geom_point(color = "gray30")+
+  geom_dl(aes(label = section_name, color = section_name), method = list(dl.combine("last.points"), cex = 0.85))+
+  scale_color_manual(values = wes_palette("Cavalcanti1"))+
   scale_x_continuous(expand = c(0, 0),
-                   limits = c(1993, 2019.5),
+                   limits = c(1993, 2021),
                    breaks = seq(1993, 2018, by = 5))+
   scale_y_continuous(expand = c(0, 0),
-                     limits = c(0, 800),
-                     breaks = seq(0, 800, by = 200))+
+                     limits = c(0, 400),
+                     breaks = seq(0, 400, by = 100))+
   labs(x = "Year",
        y = "Count",
        title = "Salamander Counts by Section: 1993 - 2017")+
-  theme_light()
+  theme_minimal()
 
 ```
 
+##### Interesting Trends
+- Interesting trend 1
+- Interesting trend 2
+- Interesting trend 3
+
+
+#### Results B: 2017 Salamander Counts by Channel Classification
+
+**Figure 2:** *Insert caption here*
 ```{r}
 
 # ---------------------------------------------------------------------
@@ -104,6 +128,8 @@ kable(mack_c_props) %>%
 
 ```
 
+
+#### Results C: Analysis of Salamander Counts by Channel Classification
 ```{r}
 
 # ----------------------------------------------------
@@ -115,12 +141,16 @@ chi_mack <- mack_c_table %>%
   select(-Section)
 
 chi_mack_test <- chisq.test(chi_mack)
-
-chi_mack_test
-
 ```
 
-```{r}
+Chi Squared test of independence: `r (chi_mack_test$statistic)`
+
+Regarding the locations where salamanders were observed in Mack Creek in 2017, is there a significant effect of forest condition (old growth or clear cut) on where in the channel salamanders are found (channel classification)? Report your statistical findings in text, in the context of the actual counts / proportions you present in the table. 
+
+
+#### Results D: Pacific Giant Salamander Weights by Section
+
+```{r, fig.width=6, fig.height=6, fig.cap = "**Figure 1**: *Insert caption here.*"}
 
 # ---------------------------------------------
 # Results D: Create data frame to compare means
@@ -142,27 +172,30 @@ mack_c_summary <- mack_c_weights_graph %>%
 # ---------------------------------------
 
 ggplot()+
-  geom_beeswarm(data = mack_c_weights_graph, 
-                aes(x = section, y = weight),
-                size = 1,
+  geom_jitter(data = mack_c_weights_graph, 
+                aes(x = section, y = weight, color = section),
+                size = 1.5,
                 alpha = 0.6,
-                color = "dodgerblue") +
+                show.legend = FALSE) +
+  scale_color_manual(values = wes_palette("Cavalcanti1"))+
   geom_point(data = mack_c_summary,
              aes(x = section, y = mean_weight),
-             color = "red",
-             size = 2) +
+             color = "black",
+             size = 2.25) +
   geom_errorbar(data = mack_c_summary,
                 aes(x = section,
                     ymin = mean_weight - sd_weight,
                     ymax = mean_weight + sd_weight),
                 width = 0.1,
-                color = "red")+
+                size = 1.15,
+                color = "black")+
   scale_x_discrete(labels = c("Clear Cut", "Old Growth"))+
   labs(x = "Section",
        y = "Weight",
-       title = "2017 Means Comparison: Old Growth vs Clear Cut")
+       title = "2017 Means Comparison: Old Growth vs Clear Cut")+
+  theme_minimal()
 
-# Make sure that the beeswarm and the means are lined up appropriately
+# Make sure that the beeswarm and the means are lined up appropriately. How do you make sure? Visual Check?
 ```
 
 ```{r}
@@ -180,9 +213,12 @@ ggplot()+
    pull(weight)
 
  mack_means_comparison <- t.test(mack_weights_og, mack_weights_cc)
- mack_means_comparison
 
 ```
+
+##### Means Comparison Analysis
+
+There is not a significant difference: (t(`r round(mack_means_comparison$p.value, 2)`) = `r round(mack_means_comparison$p.value, 3)`
 
 ```{r}
 
@@ -191,10 +227,12 @@ ggplot()+
 # ---------------------------------------------------
 
  mack_pcs_weights <- mack_creek %>% 
-   select("year", "unittype", "weight", "section") %>% 
+  select("year", "unittype", "weight", "section") %>% 
    filter(unittype %in% c("C", "P", "SC"),
           year == 2017,
-          section %in% c("CC", "OG"))
+          section %in% c("CC", "OG")) %>% 
+  mutate(unittype = ifelse(unittype == "C", "Cascades",
+                           ifelse(unittype == "P", "Pool", "Side Channel")))
  
  mack_pcs_summary <- mack_pcs_weights %>% 
    group_by(unittype) %>% 
@@ -214,12 +252,20 @@ ggplot()+
 # ------------------------------------
 
 ggplot(data = mack_pcs_weights, aes(sample = weight))+
-  geom_qq()+
-  facet_wrap(~unittype)
+  geom_qq(aes(color = unittype), show.legend = FALSE)+
+  scale_color_manual(values = wes_palette("Darjeeling1"))+
+  facet_wrap(~unittype)+
+  labs(x = "Theoretical",
+       y = "Samples")
 
 ggplot(data = mack_pcs_weights, aes(x = weight))+
-  geom_histogram()+
-  facet_wrap(~unittype)
+  geom_histogram(aes(fill = unittype), 
+                 color = "black", 
+                 show.legend = FALSE)+
+  scale_fill_manual(values = wes_palette("Darjeeling1"))+
+  facet_wrap(~unittype)+
+  labs(x = "Weight",
+       y = "Count")
 
 # ------------------------------------------------
 # Conduct a Lavene's test to ensure equal variance
@@ -244,22 +290,26 @@ leveneTest(weight ~ unittype, data = mack_pcs_weights)
 # -----------------------------------
 
 ggplot()+
-   geom_beeswarm(data = mack_pcs_weights,
-                 aes(x = unittype, y = weight),
+   geom_jitter(data = mack_pcs_weights,
+                 aes(x = unittype, y = weight, color = unittype),
                  size = 1,
                  alpha = 0.6,
-                 color = "dodgerblue") +
+               show.legend = FALSE) +
+   scale_color_manual(values = wes_palette("Darjeeling1"))+
    geom_point(data = mack_pcs_summary,
               aes(x = unittype, y = mean_weight),
-              color = "red",
+              color = "black",
               size = 2)+
    geom_errorbar(data = mack_pcs_summary,
                  aes(x = unittype,
                      ymin = mean_weight - sd_weight,
                      ymax = mean_weight + sd_weight),
                  width = 0.1,
-                 color = "red") +
-   scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))
+                 color = "black") +
+   scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))+
+  labs(x = "Unit Type",
+       y = "Weight (grams)",
+       title = "Means Comparison by Channel Clasification")
 
  # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
 
