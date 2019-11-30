@@ -49,9 +49,9 @@ mack_creek_count <- mack_creek %>%
   group_by(year, section) %>% 
   summarize(count = n())
 
-# --------------------------------
+# -------------------------------------------
 # Use ggplot to create salamander count graph
-# --------------------------------
+# -------------------------------------------
 
 ggplot(data = mack_creek_count, aes(x = year, y = count, group = section))+
   geom_line(aes(color = section), show.legend = FALSE)+
@@ -65,7 +65,8 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section))+
                      breaks = seq(0, 800, by = 200))+
   labs(x = "Year",
        y = "Count",
-       title = "Salamander Counts by Section: 1993 - 2017")
+       title = "Salamander Counts by Section: 1993 - 2017")+
+  theme_light()
 
 ```
 
@@ -76,11 +77,11 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section))+
 # ---------------------------------------------------------------------
 
 mack_c_table <- mack_creek %>% 
+  filter(section %in% c("OG", "CC")) %>% 
   mutate(section_name = if_else(section == "CC", "Clear Cut", "Old Growth")) %>% 
   select(year, section_name, unittype) %>%
   filter(year == 2017,
-         unittype %in% c("C", "P", "SC"),
-         section_name %in% c("Clear Cut", "Old Growth")) %>% 
+         unittype %in% c("C", "P", "SC")) %>% 
   group_by(section_name, unittype) %>% 
   summarize(count = n()) %>% 
   pivot_wider(names_from = unittype, values_from = count) %>% 
@@ -94,9 +95,9 @@ mack_c_props <- mack_c_table %>%
   adorn_pct_formatting(digits = 1) %>% 
   adorn_ns(position = "front")
 
-# --------------------------------
+# ------------------------------------
 # Create contingency table using kable
-# --------------------------------
+# ------------------------------------
 
 kable(mack_c_props) %>% 
   kable_styling()
@@ -121,9 +122,9 @@ chi_mack_test
 
 ```{r}
 
-# -------------------------------------------------
+# ---------------------------------------------
 # Results D: Create data frame to compare means
-# -------------------------------------------------
+# ---------------------------------------------
 
 mack_c_weights_graph <- mack_creek %>% 
   select("year", "section", "weight") %>% 
@@ -137,7 +138,7 @@ mack_c_summary <- mack_c_weights_graph %>%
     sd_weight = sd(weight, na.rm = TRUE))
 
 # ---------------------------------------
-# Use gbeeswarm to visually compare means
+# Use ggbeeswarm to visually compare means
 # ---------------------------------------
 
 ggplot()+
@@ -160,6 +161,8 @@ ggplot()+
   labs(x = "Section",
        y = "Weight",
        title = "2017 Means Comparison: Old Growth vs Clear Cut")
+
+# Make sure that the beeswarm and the means are lined up appropriately
 ```
 
 ```{r}
@@ -214,11 +217,23 @@ ggplot(data = mack_pcs_weights, aes(sample = weight))+
   geom_qq()+
   facet_wrap(~unittype)
 
+ggplot(data = mack_pcs_weights, aes(x = weight))+
+  geom_histogram()+
+  facet_wrap(~unittype)
+
 # ------------------------------------------------
 # Conduct a Lavene's test to ensure equal variance
 # ------------------------------------------------
 
 leveneTest(weight ~ unittype, data = mack_pcs_weights)
+
+# ----------------------------------------------------
+# Conduct a chi-squared test to check for independence?
+# ----------------------------------------------------
+
+# chi_pcs_mack <- mack_pcs_weights %>%
+# group_by(unittype) %>% 
+#  summarize(weight = mean(weights))
 
 ```
 
@@ -266,4 +281,3 @@ summary(mack_aov)
 TukeyHSD(mack_aov)
 
 ```
-
