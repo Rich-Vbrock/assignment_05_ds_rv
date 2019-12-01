@@ -31,6 +31,7 @@ library(kableExtra)
 library(ggbeeswarm)
 library(car)
 library(wesanderson)
+library(effsize)
 
 ```
 
@@ -228,7 +229,6 @@ ggplot()+
 &nbsp;
 
 #### **Results E:** Means Comparison of Salamander Weight by Channel Classification
-##### Visual Comparison of Salamander Weight by Channel Classification
 
 ```{r}
 
@@ -281,7 +281,7 @@ ggplot()+
    scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))+
   labs(x = "Unit Type",
        y = "Weight (grams)",
-       title = "Means Comparison by Channel Clasification")+
+       title = "Mean Weight Comparison by Channel Classification")+
   theme_light()
 
  # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
@@ -333,7 +333,7 @@ chi_pcs_mack <- mack_pcs_weights %>%
 </center>
 
 #### Levene's Test for Equal Variance
-- Levene's Test Result: With a p-value of 0.09, this is not significant and we retain the null hypothesis of equal variances. 
+- Levene's Test Result: With a p-value of 0.093, this is not significant and we retain the null hypothesis of equal variances. 
 
 ```{r}
 
@@ -342,18 +342,34 @@ chi_pcs_mack <- mack_pcs_weights %>%
 # ----------------------------------------
 
 mack_aov <- aov(weight ~ unittype, data = mack_pcs_weights)
+mack_aov_outputs <- unlist(summary(mack_aov))
 
 # ----------------------------------------
 # Conduct Tukey's HSD for post-hoc testing
 # ----------------------------------------
 
-# TukeyHSD(mack_aov)
+mack_tukeyHSD <- TukeyHSD(mack_aov)
+
+# ------------
+# Cohen's D to test effect size: The magnitude of the difference in weights
+# -------------
+
+pool_weights <- mack_pcs_weights %>%
+  filter(unittype == "Pool") %>%
+  pull(weight)
+
+sc_weights <- mack_pcs_weights %>%
+  filter(unittype == "Side Channel") %>%
+  pull(weight)
+
+effect_size_p_sc <- cohen.d(pool_weights,sc_weights, na.rm = TRUE)
 
 ```
 
 #### One-way ANOVA & Post-Hoc Testing:
-- ANOVA Result: `r (mack_aov$p.value)`
-- Tukey's HSD Result:
+- ANOVA Result: Mean salamander weight (g) differed significantly between the three channel classifications (pool, cascade, side-channel) based on a one-way ANOVA test (F(`r mack_aov_outputs[1]`, `r mack_aov_outputs[2]`) = `r round(mack_aov_outputs[7],2)`, *p-value* = `r round(mack_aov_outputs[9],3)`). 
+- Tukey's HSD Result: Pairwise testing reveals that mean weights of Pool salamanders differ significantly from Side Channel salamanders (*p-value* = `r round(mack_tukeyHSD$unittype[12],3)`), however, means of other pairwise combinatiosn do not differ significantly. Pool salamanders and Cascade salamanders: (*p-value* = `r round(mack_tukeyHSD$unittype[10],3)`). Side channel salamanders and Cascade salamanders: (*p-value* = `r round(mack_tukeyHSD$unittype[11],3)`)
+- Effect size: Even though a significant difference in means is found between salamanders sampled in pools vs. side-channels, the effect size is small as tested with Cohen's d: (*d estimate* = `r round(effect_size_p_sc$estimate, 2)`) 
 
 #### Analysis of Results:
 - Interesting trend 1
