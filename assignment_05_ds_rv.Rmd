@@ -88,9 +88,8 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section_name))+
 </center>
 
 #### Analysis of Results:
-- Interesting trend 1
-- Interesting trend 2
-- Interesting trend 3
+- There is little visual difference between salamander counts in old growth and clear cut areas between 1993 and 2017. 
+- Both old growth and clear cut areas experienced significant decline in salamander population between 2013 and 2015.
 
 &nbsp;
 
@@ -131,11 +130,6 @@ kable(mack_c_props) %>%
 
 ```
 
-#### Analysis of Results:
-- Interesting trend 1
-- Interesting trend 2
-- Interesting trend 3
-
 &nbsp;
 
 #### **Results C:** Analysis of Salamander Counts by Channel Classification
@@ -150,11 +144,12 @@ chi_mack <- mack_c_table %>%
   select(-Section)
 
 chi_mack_test <- chisq.test(chi_mack)
+
+# Regarding the locations where salamanders were observed in Mack Creek in 2017, is there a significant effect of forest condition (old growth or clear cut) on where in the channel salamanders are found (channel classification)? Report your statistical findings in text, in the context of the actual counts / proportions you present in the table. 
 ```
 
-Chi Squared test of independence: `r (chi_mack_test$statistic)`
-
-Regarding the locations where salamanders were observed in Mack Creek in 2017, is there a significant effect of forest condition (old growth or clear cut) on where in the channel salamanders are found (channel classification)? Report your statistical findings in text, in the context of the actual counts / proportions you present in the table. 
+- Chi Squared test of independence p-value: `r round(chi_mack_test$p.value, 2)`. 
+- There is not a significant effect of forest condition on where channel salamanders are found. 
 
 &nbsp;
 
@@ -226,7 +221,9 @@ ggplot()+
 
 ```
 
-There is not a significant difference: (t(`r round(mack_means_comparison$p.value, 2)`) = `r round(mack_means_comparison$p.value, 3)`
+#### Analysis of Results: 
+- Welch's 2-sample t-test p-value: `r round(mack_means_comparison$p.value, 3)`
+- There is not a significant difference in weights between giant salamanders in clear cut and old growth sections.
 
 &nbsp;
 
@@ -291,7 +288,9 @@ ggplot()+
 
 ```
 </center>
-##### Analysis of Data Spread Normalcy and Variance
+
+&nbsp;
+
 <center>
 ```{r}
 
@@ -304,40 +303,37 @@ ggplot(data = mack_pcs_weights, aes(sample = weight))+
   scale_color_manual(values = wes_palette("Darjeeling1"))+
   facet_wrap(~unittype)+
   labs(x = "Theoretical",
-       y = "Samples")
+       y = "Samples",
+       title = "Analysis of Data Spread Normalcy")
 
-ggplot(data = mack_pcs_weights, aes(x = weight))+
-  geom_histogram(aes(fill = unittype), 
-                 color = "black", 
-                 show.legend = FALSE)+
-  scale_fill_manual(values = wes_palette("Darjeeling1"))+
-  facet_wrap(~unittype)+
-  labs(x = "Weight",
-       y = "Count")
+# ggplot(data = mack_pcs_weights, aes(x = weight))+
+#  geom_histogram(aes(fill = unittype), 
+#                 color = "black", 
+#                 show.legend = FALSE)+
+#  scale_fill_manual(values = wes_palette("Darjeeling1"))+
+#  facet_wrap(~unittype)+
+#  labs(x = "Weight",
+#       y = "Count")
 
 # ------------------------------------------------
 # Conduct a Lavene's test to ensure equal variance
 # ------------------------------------------------
 
-# leveneTest(weight ~ unittype, data = mack_pcs_weights)
+pcs_lavene_test <- leveneTest(weight ~ unittype, data = mack_pcs_weights, na.rm = TRUE)
 
 # ----------------------------------------------------
 # Conduct a chi-squared test to check for independence?
 # ----------------------------------------------------
 
-# chi_pcs_mack <- mack_pcs_weights %>%
-# group_by(unittype) %>% 
-#  summarize(weight = mean(weights))
+chi_pcs_mack <- mack_pcs_weights %>%
+  group_by(unittype) %>% 
+  summarize(weight = mean(weights))
 
 ```
 </center>
 
 #### Lavene's Test for Equal Variance
 - Lavene's Test Result:
-
-#### One-way ANOVA & Post-Hoc Testing:
-- ANOVA Result:
-- Tukey's HSD Result:
 
 ```{r}
 
@@ -346,7 +342,6 @@ ggplot(data = mack_pcs_weights, aes(x = weight))+
 # ----------------------------------------
 
 mack_aov <- aov(weight ~ unittype, data = mack_pcs_weights)
-# summary(mack_aov)
 
 # ----------------------------------------
 # Conduct Tukey's HSD for post-hoc testing
@@ -355,6 +350,10 @@ mack_aov <- aov(weight ~ unittype, data = mack_pcs_weights)
 # TukeyHSD(mack_aov)
 
 ```
+
+#### One-way ANOVA & Post-Hoc Testing:
+- ANOVA Result: `r (mack_aov$p.value)`
+- Tukey's HSD Result:
 
 #### Analysis of Results:
 - Interesting trend 1
