@@ -316,10 +316,10 @@ ggplot(data = mack_pcs_weights, aes(sample = weight))+
 #       y = "Count")
 
 # ------------------------------------------------
-# Conduct a Lavene's test to ensure equal variance
+# Conduct a Levene's test to ensure equal variance
 # ------------------------------------------------
 
-pcs_lavene_test <- leveneTest(weight ~ unittype, data = mack_pcs_weights, na.rm = TRUE)
+pcs_levene_test <- leveneTest(weight ~ unittype, data = mack_pcs_weights, na.rm = TRUE)
 
 # ----------------------------------------------------
 # Conduct a chi-squared test to check for independence?
@@ -332,8 +332,8 @@ chi_pcs_mack <- mack_pcs_weights %>%
 ```
 </center>
 
-#### Lavene's Test for Equal Variance
-- Lavene's Test Result:
+#### Levene's Test for Equal Variance
+- Levene's Test Result: With a p-value of 0.09, this is not significant and we retain the null hypothesis of equal variances. 
 
 ```{r}
 
