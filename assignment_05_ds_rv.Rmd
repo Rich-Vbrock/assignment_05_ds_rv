@@ -88,9 +88,9 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section_name))+
        title = "Salamander Counts by Forest Section: 1993 - 2017")+
   theme_light()
 ```
-**Figure 1**: *Counts of Pacific Giant Salamander’s compared between clear-cut forest section and old-growth forest section between 1993 and 2017. Visually, there is little difference between the counts of Pacific Giant Salamanders in clear-cut and old-growth forest sections.*
+**Figure 1**: *Counts of Pacific Giant Salamander’s compared between clear-cut forest section and old-growth forest section between 1993 and 2017.*
 
-Trends in Giant Pacific Salamander counts were compared between clear-cut and old-growth forest sections between 1993 and 2017 (Figure 1). Noticeably, there is little visual difference between counts of Pacific Giant Salamanders in old-growth and clear-cut forest sections. Populations of Giant Pacific Salamanders in both the clear-cut and old-growth forest sections experienced significant decline in populations between 2013 and 2015.
+Trends in Giant Pacific Salamander counts were compared between clear-cut and old-growth forest sections between 1993 and 2017 (Figure 1). Noticeably, there is little visual difference in the fluctuation of salamander counts in old-growth and clear-cut forest sections. Despite little difference in the fluctuation of salamander counts, on average, salamander counts in old-growth forest sections were greater until 2014. Populations of Giant Pacific Salamanders in both the clear-cut and old-growth forest sections experienced significant decline in populations between 2013 and 2015.
 
 #### **Results B:** 2017 Salamander Counts by Channel Classification
 
@@ -146,7 +146,7 @@ chi_mack_test <- chisq.test(chi_mack)
 # Regarding the locations where salamanders were observed in Mack Creek in 2017, is there a significant effect of forest condition (old growth or clear cut) on where in the channel salamanders are found (channel classification)? Report your statistical findings in text, in the context of the actual counts / proportions you present in the table. 
 ```
 
-A chi-squared test of independence was conducted to analyze whether there is a significant effect of forest condition on the channel classification where Pacific Giant Salamanders were observed. The analysis shows that, at a 95% confidence interval, there is not a significant effect of forest section on where Pacific Giant Salamanders were observed (*p-value*: `r round(chi_mack_test$p.value, 4)`). 
+A chi-squared test of independence was conducted to analyze whether there is a significant effect of forest condition on the channel classification where Pacific Giant Salamanders were observed. The analysis shows that, at a 95% confidence level, there is not a significant effect of forest section on where Pacific Giant Salamanders were observed (*p-value*: `r round(chi_mack_test$p.value, 4)`). Despite unequal distribution of salamander counts across forest sections (as seen in Table 1), there is not a statistically significant relationship that exists between forest section and channel classification at the 95% confidence level.
 
 #### **Results D:** Pacific Giant Salamander Weights by Section
 ```{r, fig.align = 'center'}
@@ -216,7 +216,7 @@ ggplot()+
 
 ```
 
-A Welch’s two sample t-test was conducted to analyze whether there is a significant difference in mean weight of Pacific Giant Salamanders in clear-cut and old-growth forest sections. Test results show that, at a 95% confidence interval, there is not a significant difference in the mean weight of Pacific Giant Salamanders between the two forest sections (*p-value:* `r round(mack_means_comparison$p.value, 3)`). These results reinforce findings in Results A, Results B, and Results C, that indicate that there is no significant effect of forest section on Pacific Giant Salamander populations in Mack Creek. 
+A Welch’s two sample t-test was conducted to analyze whether there is a significant difference in mean weight of Pacific Giant Salamanders in clear-cut and old-growth forest sections. Test results show that, at a 95% confidence level, there is not a significant difference in the mean weight of Pacific Giant Salamanders between the two forest sections (*p-value:* `r round(mack_means_comparison$p.value, 3)`). These results reinforce findings in Results A, Results B, and Results C, that indicate that there is no significant effect of forest section on Pacific Giant Salamander populations in Mack Creek. 
 
 #### **Results E:** Means Comparison of Salamander Weight by Channel Classification
 
@@ -360,8 +360,14 @@ effect_size_p_sc <- cohen.d(pool_weights,sc_weights, na.rm = TRUE)
 - Tukey's HSD Result: Pairwise testing reveals that mean weights of Pool salamanders differ significantly from Side Channel salamanders (*p-value* = `r round(mack_tukeyHSD$unittype[12],3)`), however, means of other pairwise combinations do not differ significantly. Pool salamanders and Cascade salamanders: (*p-value* = `r round(mack_tukeyHSD$unittype[10],3)`). Side channel salamanders and Cascade salamanders: (*p-value* = `r round(mack_tukeyHSD$unittype[11],3)`)
 - Effect size: Even though a significant difference in means is found between salamanders sampled in pools vs. side-channels, the effect size is small as tested with Cohen's d: (*d estimate* = `r round(effect_size_p_sc$estimate, 2)`) 
 
-### **Summary**
-A brief summary of the major findings (pick 3 - 4) from your mini-report. A bullet-pointed list is fine, but the findings should be well-written, responsible (don’t overstate your findings), and refer to outcomes (e.g. figures, tables) in the Results section
+#### Analysis of Results
+- An Anova test was conducted to compare mean weights of salamanders across channel classifications, regardless of forest section. The results show that at the 95% confidence level, mean salamander weight was only significantly different between salamanders in side channels vs those in pools. While significantly different, the effect size is small, thus leading a conclusion that there is not considerable difference in Pacific Giant Salamander weight across channel classifications.
+- Prior to conducting the ANOVA, a QQ plot was created to evaluate normalcy of the weight distributions. The QQ plot revealed that the distributions of weights within each channel type is slightly abnormal. While this raises slight concern for the effectiveness of an ANOVA, it is widely accepted that an ANOVA is robust to violation of the normality assumption. Coupled with a Levene's test that indicates non-significant difference in variance, the results of the ANOVA test are still valuable. 
+
+### **Summary**   
+- 95% confidence interval for chi-squared test
+- Surprising that there is little relationship between salamander and forest section type. Only indicates relationship between salamanders and clear-cutting, not other species
+- 
 
 ### **References**
 Gregory S. V. 2016. Aquatic Vertebrate Population Study in Mack Creek, Andrews Experimental Forest, 1987 to present. Environmental Data Initiative. https://doi.org/10.6073/pasta/5de64af9c11579266ef20da2ff32f702. Dataset accessed 12/01/2019
