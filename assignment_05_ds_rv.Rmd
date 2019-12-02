@@ -1,5 +1,5 @@
 ---
-title: 'Assignment #5'
+title: 'Analysis of Pacific Giant Salamanders in Mack Creek, OR'
 author: "Richard Viebrock and David Segan"
 date: "11/27/2019"
 output: html_document
@@ -11,11 +11,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 ### **Introduction**
 
-Nestled alongside Oregon's forest-dense McKenzie River, Mack Creek is home to the Pacific Giant Salamander. 
-
-Forest sections along Mack Creek, which is a part of the H.J. Andrews Experimental Forest, have been clear-cut. It is not fully understood whether or not the clear-cutting of the forest has a significant impact on the Pacific Giant Salamander population. Since 1993, Pacific Giant Salamanders have been monitored in both a clear-cut forest section and a 500-year-old, old-growth coniferous forest section. two forest sections along Mack Creek, within the H.J. Andrews Experimental Forest. Observations of Pacific Giant Salamander's also includes the specific location where Pacific Giant Salamanders were found in the channel. Here, we analyze the 
-
-The results of this analysis sheds light on the relationship that exists between forest section and Pacific Giant Salamanders in Mack Creek.
+Nestled alongside Oregon's McKenzie River lies Mack Creek, a forest-dense aquatic area that provides habitat for the Pacific Giant Salamander. The density of forest alongside Mack Creek varies greatly between different forest sections due to historic forest clear-cutting. It is not fully understood whether the clear-cutting of forest has had a significant impact on the Pacific Giant Salamander population in Mack Creek. Fortunately, for the purposes of this report, the Pacific Giant Salamander population along Mack Creek has been monitored in both a clear-cut forest section and a 500-year-old, old-growth forest section since 1993. Data from this monitoring of Pacific Giant Salamanders includes the specific location of individual observations, overall counts, and individual weights. Here, we analyze this data to provide insight into the the effect that forest clear-cutting has on Pacific Giant Salamander populations in Mack Creek.
 
 ![Mack Creek Location](capture_01.PNG)
 
@@ -89,16 +85,16 @@ ggplot(data = mack_creek_count, aes(x = year, y = count, group = section_name))+
                      breaks = seq(0, 400, by = 100))+
   labs(x = "Year",
        y = "Count",
-       title = "Salamander Counts by Section: 1993 - 2017")+
+       title = "Salamander Counts by Forest Section: 1993 - 2017")+
   theme_light()
 ```
-**Figure 1**: *Counts of Pacific Giant Salamander’s compared between clear-cut forest section and old-growth forest section between 1993 and 2017. Visually, there is little difference between the counts of Pacific Giant Salamanders in clear cut and old growth forest sections.*
+**Figure 1**: *Counts of Pacific Giant Salamander’s compared between clear-cut forest section and old-growth forest section between 1993 and 2017. Visually, there is little difference between the counts of Pacific Giant Salamanders in clear-cut and old-growth forest sections.*
 
 Trends in Giant Pacific Salamander counts were compared between clear-cut and old-growth forest sections between 1993 and 2017 (Figure 1). Noticeably, there is little visual difference between counts of Pacific Giant Salamanders in old-growth and clear-cut forest sections. Populations of Giant Pacific Salamanders in both the clear-cut and old-growth forest sections experienced significant decline in populations between 2013 and 2015.
 
 #### **Results B:** 2017 Salamander Counts by Channel Classification
 
-**Table 1:** *2017 Salamander counts by channel classification (pool, cascades, and side-channel) in old-growth and clear-cut sections of Mack Creek. Proportions provide slight indication of the effect that forest section has on the channel section where Pacific Giant Salamanders are found.*
+**Table 1:** *2017 Salamander counts by channel classification (pool, cascades, and side-channel) in old-growth and clear-cut sections of Mack Creek. Proportions provide insight into the relationship that exists between forest section and the channel section where Pacific Giant Salamanders were observed.*
 ```{r, fig.align = 'center'}
 
 # ---------------------------------------------------------------------
@@ -129,7 +125,9 @@ mack_c_props <- mack_c_table %>%
 # ------------------------------------
 
 kable(mack_c_props) %>% 
-  kable_styling()
+  kable_styling(bootstrap_options = "striped", 
+                full_width = F, 
+                position = "center")
 
 ```
 #### **Results C:** Analysis of Salamander Counts by Channel Classification
@@ -191,14 +189,14 @@ ggplot()+
                 size = 1.15,
                 color = "black")+
   scale_x_discrete(labels = c("Clear Cut", "Old Growth"))+
-  labs(x = "Section",
+  labs(x = "Forest Section",
        y = "Weight",
-       title = "2017 Means Comparison: Old Growth vs Clear Cut")+
+       title = "Salamander Mean Weight Comparison: Old Growth vs Clear Cut (2017)")+
   theme_light()
 
 # Make sure that the beeswarm and the means are lined up appropriately. How do you make sure? Visual Check?
 ```
-**Figure 2**: *Comparison of weights of Pacific Giant Salamanders observed in clear-cut forest section and old-growth forest section. Mean weight is displayed as black dot with error bars that display one standard deviation from mean. Mean weight of Pacific Giant Salamanders in clear cut forest sections = 7.78g, and old growth forest section = 6.58g.*
+**Figure 2**: *Comparison of weights of Pacific Giant Salamanders observed in clear-cut forest section and old-growth forest section. Mean weight is displayed as black dot with error bars that display one standard deviation from mean. Mean weight of Pacific Giant Salamanders in clear-cut forest sections = 7.78g, and old-growth forest section = 6.58g.*
 
 ```{r}
 
@@ -218,7 +216,7 @@ ggplot()+
 
 ```
 
-A Welch’s two sample t-test was conducted to analyze whether there is a significant difference in mean weight of Pacific Giant Salamanders in clear cut and old growth forest sections. Test results show that, at a 95% confidence interval, there is not a significant difference in the mean weight of Pacific Giant Salamanders between the two forest sections (*p-value:* `r round(mack_means_comparison$p.value, 3)`). These results reinforce findings in Results A, Results B, and Results C, that indicate that there is no significant effect of forest section on Pacific Giant Salamander populations in Mack Creek. 
+A Welch’s two sample t-test was conducted to analyze whether there is a significant difference in mean weight of Pacific Giant Salamanders in clear-cut and old-growth forest sections. Test results show that, at a 95% confidence interval, there is not a significant difference in the mean weight of Pacific Giant Salamanders between the two forest sections (*p-value:* `r round(mack_means_comparison$p.value, 3)`). These results reinforce findings in Results A, Results B, and Results C, that indicate that there is no significant effect of forest section on Pacific Giant Salamander populations in Mack Creek. 
 
 #### **Results E:** Means Comparison of Salamander Weight by Channel Classification
 
@@ -271,9 +269,9 @@ ggplot()+
                  width = 0.1,
                  color = "black") +
    scale_x_discrete(labels = c("Cascade", "Pool", "Side Channel"))+
-  labs(x = "Unit Type",
+  labs(x = "Channel Classification",
        y = "Weight (grams)",
-       title = "Mean Weight Comparison by Channel Classification")+
+       title = "Salamander Mean Weight Comparison by Channel Classification (2017)")+
   theme_light()
 
  # Make sure that data is lined up correctly so that you don't have a mean in the wrong place. If the mack_pcs_weights is in the same order as mack_pcs_summary, everything works
@@ -295,7 +293,7 @@ ggplot(data = mack_pcs_weights, aes(sample = weight))+
   facet_wrap(~unittype)+
   labs(x = "Theoretical",
        y = "Samples",
-       title = "Analysis of Data Spread Normalcy")+
+       title = "Analysis of Data Spread Normalcy: Salamander Weights (2017)")+
   theme_light()
 
 # ggplot(data = mack_pcs_weights, aes(x = weight))+
