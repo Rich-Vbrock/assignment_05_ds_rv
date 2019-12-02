@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 ### **Introduction**
 
-Since 1993, (Insert Name) has been monitoring populations of Pacific Giant Salamanders in two sections of Mack Creek in the H.J. Andrews Experimental Forest. The two forest sections from which observations have been recorded for Pacific Giant Salamanders are a clear-cut forest section and a 500-year-old, old-growth coniferous forest section. Observations in this data also include the specific location where Pacific Giant Salamanders were found in the channel. Here, we analyze the data to provide insight into the effect that forest section has on the size and count of Pacific Giant Salamanders in Mack Creek. Furthermore, we analyze whether there is a significant effect of forest condition (old growth vs clear cut) on where in the channel Pacific Giant Salamander’s are found (Cascades, Side-Channel, and Pool). The results of this analysis sheds light on the relationship that exists between forest section and Pacific Giant Salamanders in Mack Creek.
+Since 1993, (Insert Name) has been monitoring populations of Pacific Giant Salamanders in two sections of Mack Creek in the H.J. Andrews Experimental Forest. The two forest sections from which observations have been recorded for Pacific Giant Salamanders are a clear-cut forest section and a 500-year-old, old-growth coniferous forest section. Observations in this data also include the specific location where Pacific Giant Salamanders were found in the channel. The results of this analysis sheds light on the relationship that exists between forest section and Pacific Giant Salamanders in Mack Creek.
 
 ![Mack Creek Location](capture_01.PNG)
 
@@ -19,7 +19,8 @@ Since 1993, (Insert Name) has been monitoring populations of Pacific Giant Salam
 
 ### **Data and Methods**
 
-A brief ‘Data and Methods’ section (5 - 6 sentences) summarizing the data and how it was analyzed. Briefly describe the variables being studied in this report. Include the types of statistical tests performed, significance level used, and software (with version) for analysis. Include a map of the area. You can use an already published map of the area, making sure to give appropriate credit to the author / creator) in the map figure caption.
+Annually collected data on the Pacific giant salamanders from 1993 to 2017 in the old growth section and the previously clear-cut section of the Andrews Experimental Forest was used for the analysis. Among these two groups, counts, weights, and location of salamanders within the Mack Creek channel (pool, cascade, or side-channel) were analyzed using a significance level of 0.05. For more information on collection methods and variables, see [metadata](https://portal.edirepository.org/nis/metadataviewer?packageid=knb-lter-and.4027.12). A chi-squared test was used to determine if there is a significant effect of forest condition (old growth vs clear cut) on where in the channel Pacific Giant Salamander’s are found (Cascades, Side-Channel, and Pool). A two-sample t-test was used to compare the weights of Pacific Giant Salamanders between the two forest sections. Lastly, a one-way ANOVA test, along with Tukey's HSD and Cohen's D for post-hoc testing was conducted to compare mean weights across channel locations. 
+
 
 ```{r}
 
