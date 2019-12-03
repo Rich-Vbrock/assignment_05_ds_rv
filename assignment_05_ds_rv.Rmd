@@ -367,7 +367,7 @@ effect_size_p_sc <- cohen.d(pool_weights,sc_weights, na.rm = TRUE)
 ### **Summary**   
 - Pacific Giant Salamander counts have fluctuated greatly in Mack Creek from 1993 to 2018. These fluctuations have largely been the same in the previously clear cut section of the forest as in the old growth section of forest (Figure 1).
 - In 2017, mean weight of Pacfic Giant Salamanders sampled in clear-cut forests were 1.2 grams larger (~18% larger) than those sampled in old growth forest sections.(Figure 2) 
-- Despite differences, statistical tests show inconclusive evidence that any strong relationships exist at the 95% confidence level between 1) forest section and where the Pacific Giant Salamander are found, 2) weights of the salamanders across forest sections, and 3) weights of the salamanders across channel classifications. (Results B, C, D, & E)
+- Despite differences in actual data, statistical tests show inconclusive evidence that any strong relationships exist at the 95% confidence level between 1) forest section and where the Pacific Giant Salamander are found, 2) weights of the salamanders across forest sections, and 3) weights of the salamanders across channel classifications. (Results B, C, D, & E)
 
 
 ### **References**
